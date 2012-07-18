@@ -151,35 +151,46 @@ function okClickedHandler()
     exportImages(baseName, resizeOption, resizeMethod, scaleStyles);
 }
 
-exportDialog = new Window('dialog', 'Export Selected Layer for iOS'); 
-exportDialog.alignChildren = 'left';
+function showDialog()
+{
 
-exportDialog.namePanel = exportDialog.add('panel', undefined, 'Base name');
-exportDialog.namePanel.alignChildren = 'left';
+  exportDialog = new Window('dialog', 'Export Selected Layer for iOS'); 
+  exportDialog.alignChildren = 'left';
+  
+  exportDialog.namePanel = exportDialog.add('panel', undefined, 'Base name');
+  exportDialog.namePanel.alignChildren = 'left';
+  
+  exportDialog.namePanel.nameBox = exportDialog.namePanel.add('edittext', undefined, 'Name');
+  exportDialog.namePanel.nameBox.preferredSize = [140,20];
+  exportDialog.namePanel.nameBox.text = app.activeDocument.activeLayer.name;
+  
+  exportDialog.sizesPanel = exportDialog.add('panel', undefined, 'Export Sizes');
+  exportDialog.sizesPanel.alignChildren = 'left';
+  
+  
+  exportDialog.sizesPanel.both = exportDialog.sizesPanel.add('radiobutton', undefined, 'Regular + Retina');
+  exportDialog.sizesPanel.regular = exportDialog.sizesPanel.add('radiobutton', undefined, 'Regular Only');
+  exportDialog.sizesPanel.retina = exportDialog.sizesPanel.add('radiobutton', undefined, 'Retina Only'); 
+  exportDialog.sizesPanel.both.value = true;
+  
+  exportDialog.methodOptions = exportDialog.add('dropdownlist', undefined, [ResizeMethod.NEARESTNEIGHBOUR.name, ResizeMethod.BILINEAR.name, ResizeMethod.BICUBIC.name, ResizeMethod.BICUBICSMOOTHER.name, ResizeMethod.BICUBICSHARPER.name]);
+  exportDialog.methodOptions.children[1].selected = true;
+  exportDialog.scaleStylesCheckBox = exportDialog.add('checkbox', undefined, 'Scale Styles');
+  exportDialog.scaleStylesCheckBox.value = true;
+  
+  exportDialog.buttonGroup = exportDialog.add('group');
+  exportDialog.buttonGroup.cancelButton = exportDialog.buttonGroup.add('button', undefined, 'Cancel');
+  exportDialog.buttonGroup.okButton = exportDialog.buttonGroup.add('button', undefined, 'OK');
+  exportDialog.buttonGroup.okButton.addEventListener('click', okClickedHandler);
+  exportDialog.show();
+}
 
-var doc = app.activeDocument;
-var defaultName = doc.activeLayer.name;
+if(app.documents.length == 0)
+{
+  alert("Please open a document first");
+}
+else
+{
+  showDialog();
+}
 
-exportDialog.namePanel.nameBox = exportDialog.namePanel.add('edittext', undefined, 'Name');
-exportDialog.namePanel.nameBox.preferredSize = [140,20];
-exportDialog.namePanel.nameBox.text = defaultName;
-
-exportDialog.sizesPanel = exportDialog.add('panel', undefined, 'Export Sizes');
-exportDialog.sizesPanel.alignChildren = 'left';
-
-
-exportDialog.sizesPanel.both = exportDialog.sizesPanel.add('radiobutton', undefined, 'Regular + Retina');
-exportDialog.sizesPanel.regular = exportDialog.sizesPanel.add('radiobutton', undefined, 'Regular Only');
-exportDialog.sizesPanel.retina = exportDialog.sizesPanel.add('radiobutton', undefined, 'Retina Only'); 
-exportDialog.sizesPanel.both.value = true;
-
-exportDialog.methodOptions = exportDialog.add('dropdownlist', undefined, [ResizeMethod.NEARESTNEIGHBOUR.name, ResizeMethod.BILINEAR.name, ResizeMethod.BICUBIC.name, ResizeMethod.BICUBICSMOOTHER.name, ResizeMethod.BICUBICSHARPER.name]);
-exportDialog.methodOptions.children[1].selected = true;
-exportDialog.scaleStylesCheckBox = exportDialog.add('checkbox', undefined, 'Scale Styles');
-exportDialog.scaleStylesCheckBox.value = true;
-
-exportDialog.buttonGroup = exportDialog.add('group');
-exportDialog.buttonGroup.cancelButton = exportDialog.buttonGroup.add('button', undefined, 'Cancel');
-exportDialog.buttonGroup.okButton = exportDialog.buttonGroup.add('button', undefined, 'OK');
-exportDialog.buttonGroup.okButton.addEventListener('click', okClickedHandler);
-exportDialog.show();
